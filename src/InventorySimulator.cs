@@ -22,7 +22,7 @@ public partial class InventorySimulator(ISwiftlyCore core) : BasePlugin(core)
 
     public override void Load(bool hotReload)
     {
-        Swiftly.Initialize();
+        Runtime.Initialize();
         ConVars.Initialize();
         Core.Event.OnEntityCreated += OnEntityCreated;
         Core.Event.OnEntityDeleted += OnEntityDeleted;
@@ -45,6 +45,21 @@ public partial class InventorySimulator(ISwiftlyCore core) : BasePlugin(core)
             foreach (var player in Core.PlayerManager.GetAllPlayers())
                 if (Inventories.TryGet(player.SteamID, out var inventory))
                     player.Controller.GetState().Inventory = inventory;
+    }
+
+    public void OnUrlChanged(string oldValue, string newValue)
+    {
+        Api.ResetSuspension();
+        if (oldValue == newValue)
+            return;
+        var isOfficialHost =
+            Uri.TryCreate(newValue, UriKind.Absolute, out var uri)
+            && uri.Host.Equals("inventory.cstrike.app", StringComparison.OrdinalIgnoreCase);
+        if (!isOfficialHost)
+        {
+            ConVars.IsPublicApiStatTrakIncrement.SetInternal(false);
+            ConVars.IsPublicApiSprayConsume.SetInternal(false);
+        }
     }
 
     public void OnIsRequireInventoryChanged()
