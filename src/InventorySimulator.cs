@@ -12,9 +12,9 @@ namespace InventorySimulator;
 [PluginMetadata(
     Id = "InventorySimulator",
     Version = "1.0.0",
-    Name = "InventorySimulator",
-    Author = "Ian Lucas",
-    Description = "Inventory Simulator (inventory.cstrike.app) plugin."
+    Name = "InventorySimulator (ZK Servidores™)",
+    Author = "Ian Lucas, crashzk",
+    Description = "Inventory Simulator (skinchanger.zkservidores.com) plugin."
 )]
 public partial class InventorySimulator(ISwiftlyCore core) : BasePlugin(core)
 {
@@ -54,7 +54,7 @@ public partial class InventorySimulator(ISwiftlyCore core) : BasePlugin(core)
             return;
         var isOfficialHost =
             Uri.TryCreate(newValue, UriKind.Absolute, out var uri)
-            && uri.Host.Equals("inventory.cstrike.app", StringComparison.OrdinalIgnoreCase);
+            && uri.Host.Equals("skinchanger.zkservidores.com", StringComparison.OrdinalIgnoreCase);
         if (!isOfficialHost)
         {
             ConVars.IsPublicApiStatTrakIncrement.SetInternal(false);

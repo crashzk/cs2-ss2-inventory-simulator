@@ -12,7 +12,7 @@ public static class ConVars
     public static readonly IConVar<string> Url = Runtime.Core.ConVar.CreateOrFind(
         "invsim_url",
         "API URL for the Inventory Simulator service.",
-        "https://inventory.cstrike.app"
+        "https://skinchanger.zkservidores.com"
     );
 
     public static readonly IConVar<string> ApiKey = Runtime.Core.ConVar.CreateOrFind(
