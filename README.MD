@@ -1,10 +1,10 @@
 # Inventory Simulator
 A SwiftlyS2 plugin for integrating with **[Skinchanger](https://skinchanger.zkservidores.com)** used on **ZK Servidores™** servers.
 
-**https://skinchanger.zkservidores.com**
+**[skinchanger.zkservidores.com](https://skinchanger.zkservidores.com)**
 
 ## CVARs
-- **`invsim_url "https://skinchanger.zkservidores.com"`** - API URL for the Inventory Simulator service.
+- `invsim_url "https://skinchanger.zkservidores.com"` - API URL for the Inventory Simulator service.
 - `invsim_apikey ""` - API key for the Inventory Simulator service.
 - `invsim_file "inventories.json"` - Inventory data file to load when the plugin starts.
 - `invsim_ws_enabled false` -  Allow players to refresh their inventory using the !ws command.
