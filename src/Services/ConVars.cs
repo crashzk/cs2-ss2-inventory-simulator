@@ -130,6 +130,24 @@ public static class ConVars
         0
     );
 
+    public static readonly IConVar<bool> IsPetEnabled = Runtime.Core.ConVar.CreateOrFind(
+        "invsim_pet_enabled",
+        "Allow players' pets to spawn.",
+        true
+    );
+
+    public static readonly IConVar<bool> IsPetImmortal = Runtime.Core.ConVar.CreateOrFind(
+        "invsim_pet_immortal",
+        "Prevent players' pets from taking damage.",
+        false
+    );
+
+    public static readonly IConVar<bool> IsPetFreeRoam = Runtime.Core.ConVar.CreateOrFind(
+        "invsim_pet_free_roam",
+        "Allow players' pets to keep roaming after freeze time ends.",
+        false
+    );
+
     public static void Initialize()
     {
         _ = Url;
@@ -151,5 +169,8 @@ public static class ConVars
         _ = IsStatTrakIgnoreBots;
         _ = IsFallbackTeam;
         _ = MinModels;
+        _ = IsPetEnabled;
+        _ = IsPetImmortal;
+        _ = IsPetFreeRoam;
     }
 }

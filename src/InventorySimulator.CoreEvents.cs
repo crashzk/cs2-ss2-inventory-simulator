@@ -23,6 +23,12 @@ public partial class InventorySimulator
             case "invsim_spray_on_use":
                 OnIsSprayOnUseChanged(ConVars.IsSprayOnUse.Value);
                 return;
+            case "invsim_pet_immortal":
+                OnIsPetImmortalChanged(ConVars.IsPetImmortal.Value);
+                return;
+            case "invsim_pet_free_roam":
+                OnIsPetFreeRoamChanged(ConVars.IsPetFreeRoam.Value);
+                return;
             case "invsim_url":
                 OnUrlChanged(@event.OldValue, @event.NewValue);
                 return;
@@ -62,6 +68,27 @@ public partial class InventorySimulator
                 if (player == null || player.IsFakeClient || !player.IsValid)
                     return;
                 player.HandleSprayDecalCreated(sprayDecal);
+            });
+        }
+    }
+
+    public void OnEntitySpawned(IOnEntitySpawnedEvent @event)
+    {
+        var entity = @event.Entity;
+        var designerName = entity.DesignerName;
+        if (designerName == "chicken")
+        {
+            Core.Scheduler.NextWorldUpdate(() =>
+            {
+                var chicken = entity.As<CChicken>();
+                if (!chicken.IsValid)
+                    return;
+                var controller = chicken.Owner.Value;
+                if (controller == null || controller.SteamID == 0)
+                    return;
+                var item = controller.GetState().Inventory?.Pet;
+                if (item != null)
+                    chicken.ApplyPetStyle(item);
             });
         }
     }

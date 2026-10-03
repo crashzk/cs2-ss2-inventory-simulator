@@ -83,6 +83,8 @@ public partial class InventorySimulator
     {
         return (thisPtr, team, slot) =>
         {
+            if (slot == (int)loadout_slot_t.LOADOUT_SLOT_PET && !ConVars.IsPetEnabled.Value)
+                return SchemaHelper.GetEmptyCEconItemView();
             var ret = next()(thisPtr, team, slot);
             var inventory = new CCSPlayerInventory(thisPtr);
             if (!inventory.IsValid)
@@ -104,6 +106,26 @@ public partial class InventorySimulator
             if (item != null)
                 return controllerState.GetEconItemView(team, slot, item, ret);
             return ret;
+        };
+    }
+
+    public Natives.CCSChickenManager_ServerGamePostSimulateDelegate OnChickenManagerServerGamePostSimulate(
+        Func<Natives.CCSChickenManager_ServerGamePostSimulateDelegate> next
+    )
+    {
+        return (thisPtr, msg) =>
+        {
+            next()(thisPtr, msg);
+            if (!ConVars.IsPetFreeRoam.Value)
+                return;
+            foreach (var player in Core.PlayerManager.GetAllPlayers())
+            {
+                if (!player.IsValid)
+                    continue;
+                var chicken = player.Controller.GetPetChicken();
+                if (chicken != null && !chicken.CanRoam())
+                    chicken.SetCanRoam(true);
+            }
         };
     }
 }
