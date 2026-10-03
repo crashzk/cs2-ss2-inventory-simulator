@@ -88,6 +88,7 @@ public static class IPlayerExtensions
                 self.RegiveAgent(inventory, oldInventory);
                 self.RegiveGloves(inventory, oldInventory);
                 self.RegiveWeapons(inventory, oldInventory);
+                self.RegivePet(inventory, oldInventory);
             }
         }
 
@@ -174,6 +175,24 @@ public static class IPlayerExtensions
             if (oldItem == item)
                 return;
             pawn.RefreshGloves(item != null);
+        }
+
+        public void RegivePet(PlayerInventory inventory, PlayerInventory? oldInventory)
+        {
+            if (!ConVars.IsPetEnabled.Value)
+                return;
+            if (oldInventory?.Pet == inventory.Pet)
+                return;
+            var chicken = self.Controller.GetPetChicken();
+            if (chicken == null || chicken.LifeState != (byte)LifeState_t.LIFE_ALIVE)
+                return;
+            var position = chicken.AbsOrigin;
+            var angles = chicken.AbsRotation;
+            var canRoam = chicken.CanRoam();
+            chicken.Despawn();
+            // The client only applies the pet's look when the chicken is created.
+            var pet = CChicken.CreatePet(self.Controller, position, angles);
+            pet?.SetCanRoam(canRoam);
         }
 
         public void RegiveWeapons(PlayerInventory inventory, PlayerInventory? oldInventory)

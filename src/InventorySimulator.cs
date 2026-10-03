@@ -23,6 +23,7 @@ public partial class InventorySimulator(ISwiftlyCore core) : BasePlugin(core)
         Runtime.Initialize();
         ConVars.Initialize();
         Core.Event.OnEntityCreated += OnEntityCreated;
+        Core.Event.OnEntitySpawned += OnEntitySpawned;
         Core.Event.OnEntityDeleted += OnEntityDeleted;
         Core.Event.OnConVarValueChanged += OnConVarValueChanged;
         Core.Event.OnMapLoad += OnMapLoad;
@@ -41,12 +42,16 @@ public partial class InventorySimulator(ISwiftlyCore core) : BasePlugin(core)
         OnFileChanged();
         OnIsRequireInventoryChanged(ConVars.IsRequireInventory.Value);
         OnIsSprayOnUseChanged(ConVars.IsSprayOnUse.Value);
+        OnIsPetImmortalChanged(ConVars.IsPetImmortal.Value);
+        OnIsPetFreeRoamChanged(ConVars.IsPetFreeRoam.Value);
     }
 
     private Guid _giveNamedItemHookGuid;
     private Guid _getItemInLoadoutHookGuid;
     private Guid? _activatePlayerHookGuid;
+    private Guid? _chickenManagerPostSimulateHookGuid;
     private bool _isProcessUsercmdsHooked = false;
+    private bool _isTakeDamageHooked = false;
 
     public void OnFileChanged()
     {
@@ -100,12 +105,47 @@ public partial class InventorySimulator(ISwiftlyCore core) : BasePlugin(core)
         _isProcessUsercmdsHooked = value;
     }
 
+    public void OnIsPetImmortalChanged(bool value)
+    {
+        if (value == _isTakeDamageHooked)
+            return;
+        if (value)
+            Core.GameHooks.Entities.TakeDamage.Pre += OnTakeDamagePre;
+        else
+            Core.GameHooks.Entities.TakeDamage.Pre -= OnTakeDamagePre;
+        _isTakeDamageHooked = value;
+    }
+
+    public void OnIsPetFreeRoamChanged(bool value)
+    {
+        if (value == (_chickenManagerPostSimulateHookGuid != null))
+            return;
+        if (value)
+            _chickenManagerPostSimulateHookGuid =
+                Natives.CCSChickenManager_ServerGamePostSimulate.AddHook(
+                    OnChickenManagerServerGamePostSimulate
+                );
+        else
+        {
+            Natives.CCSChickenManager_ServerGamePostSimulate.RemoveHook(
+                _chickenManagerPostSimulateHookGuid
+                    ?? throw new InvalidOperationException(
+                        "ServerGamePostSimulate hook not installed."
+                    )
+            );
+            _chickenManagerPostSimulateHookGuid = null;
+        }
+    }
+
     public override void Unload()
     {
         Natives.CCSPlayer_ItemServices_GiveNamedItem.RemoveHook(_giveNamedItemHookGuid);
         Natives.CCSPlayerInventory_GetItemInLoadout.RemoveHook(_getItemInLoadoutHookGuid);
         OnIsRequireInventoryChanged(false);
         OnIsSprayOnUseChanged(false);
+        OnIsPetImmortalChanged(false);
+        OnIsPetFreeRoamChanged(false);
         CCSPlayerControllerState.ClearAllEconItemView();
+        SchemaHelper.FreeEmptyCEconItemView();
     }
 }
