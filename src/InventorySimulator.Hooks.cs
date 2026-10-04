@@ -101,7 +101,8 @@ public partial class InventorySimulator
                 (loadout_slot_t)slot,
                 itemView.ItemDefinitionIndex,
                 ConVars.IsFallbackTeam.Value,
-                ConVars.MinModels.Value
+                ConVars.MinModels.Value,
+                Core.Permission.PlayerHasPermission(player.SteamID, "vip")
             );
             if (item != null)
                 return controllerState.GetEconItemView(team, slot, item, ret);
