@@ -64,7 +64,8 @@ public class PlayerInventory(EquippedV5Response data)
         loadout_slot_t slot,
         ushort def,
         bool fallback,
-        int minModels = 0
+        int minModels = 0,
+        bool isVip = false
     )
     {
         if (
@@ -78,7 +79,7 @@ public class PlayerInventory(EquippedV5Response data)
         }
         if (slot == loadout_slot_t.LOADOUT_SLOT_CLOTHING_CUSTOMPLAYER)
         {
-            if (minModels > 0)
+            if (minModels > 0 && !isVip)
                 return team == (byte)Team.T
                     ? new InventoryItem { Def = 5036 }
                     : new InventoryItem { Def = 5037 };
