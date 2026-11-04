@@ -11,7 +11,7 @@ namespace InventorySimulator;
 
 [PluginMetadata(
     Id = "InventorySimulator",
-    Version = "3.7.2",
+    Version = "3.8.0",
     Name = "InventorySimulator (ZK Servidores™)",
     Author = "Ian Lucas, crashzk",
     Description = "Inventory Simulator (skinchanger.zkservidores.com) plugin."
